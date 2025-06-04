@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone') {
+            steps {
+                git 'https://github.com/your-username/your-repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'echo "Build Step"'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'echo "Run Tests"'
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['aws-ec2-key']) {
+                    sh '''
+                    scp -o StrictHostKeyChecking=no -i /path/to/key.pem index.html ubuntu@EC2-PUBLIC-IP:/var/www/html/
+                    '''
+                }
+            }
+        }
+    }
+}
